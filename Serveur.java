@@ -10,13 +10,28 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class Serveur {
+public class Serveur extends MyThread {
 	
 	public static void main (String[] args) throws UnknownHostException, IOException {
 		String hostName = "127.0.0.1";
 		int portNumber = 1180;
-		ServerSocket s = new ServerSocket(portNumber);
-		System.out.println("Serveur ecoute");
+		ServerSocket s = null;
+				
+		try {
+			s = new ServerSocket(portNumber);
+			System.out.println("Serveur ecoute");
+		} catch (UnknownHostException e)	{
+			System.err.println("Le port"+ portNumber + "est déjà utilisé !");
+		}
+		finally{
+			if(s!=null){
+				try{
+					s.close();
+				}catch(IOException e){
+					e.printStackTrace();
+					s=null;
+					}
+			}
 		
 		Socket soc = s.accept(); 
 		
