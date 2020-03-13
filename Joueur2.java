@@ -6,7 +6,7 @@ import java.util.*;
 public class Joueur2 {
 	public static final int port=1180;
 	public static void main(String [] args)throws Exception{
-		Socket socket;
+		Socket socket=null;
 
 		try{
 		socket=new Socket("127.0.0.1",port);
@@ -15,9 +15,17 @@ public class Joueur2 {
 		catch(UnknownHostException e){
 			e.printStackTrace();
 		}catch(IOException e){
+			e.printStackTrace();
 		}
 		finally{
-			socket.close();
+			if(socket!=null){
+				try{
+					socket.close();
+				}catch(IOException e){
+					e.printStackTrace();
+					socket=null;
+					}
+			}
 		}
 		BufferedReader plec=new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		PrintWriter pred=new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -29,5 +37,7 @@ public class Joueur2 {
 		System.out.println("Joueur2 reçoit:" +str);
 		System.out.println("FIN JOUEUR2");
 		pred.println("END");
+		scanner.close();
+}
 }
 }
