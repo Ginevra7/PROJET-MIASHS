@@ -1,0 +1,55 @@
+//SERVEUR 
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class Server {
+	public static void main (String[] args) {
+		try {
+			ServerSocket ss = new ServerSocket(1234);
+			System.out.println("J'attend la connexion de 2 joueurs");
+			Socket s = ss.accept();
+			InputStream is = s.getInputStream();
+			OutputStream os = s.getOutputStream();
+			System.out.println("J'attend un nombre:");
+			int nb = is.read();
+			int rep =nb*8;
+			System.out.println("J'envoie la réponse");
+			os.write(rep);
+			s.close();
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+}
+
+//CLIENT
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.util.Scanner;
+
+public class Client {
+	public static void main (String[] args) {
+		try {
+			Socket s = new Socket("localhost", 1234);
+			InputStream is = s.getInputStream();
+			OutputStream os = s.getOutputStream();
+			
+			Scanner scanner = new Scanner(System.in);
+			System.out.print("Donner un nombre:");
+			int nb = scanner.nextInt();
+			
+			os.write(nb);
+			int rep=is.read();
+			System.out.println("Résultat="+rep);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
