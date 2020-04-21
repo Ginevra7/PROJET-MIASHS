@@ -1,0 +1,253 @@
+// CLASS SERVEURMT
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+
+public class ServeurMT extends Thread {
+	String hostName = "127.0.0.1";
+	int nbJoueurs; 
+	private boolean fin;
+	private String gagnant;
+	private List<Socket> joueursConnectes=new ArrayList<>();
+	private String motBut ="jouer"; //on utilisera un dictionnaire pour déterminer le mot but
+	final Scanner sc=new Scanner(System.in);
+	
+	public void run() {
+		try {
+			ServerSocket ss = new ServerSocket(2345);
+			System.out.println("Serveur ecoute");
+			while(true) {
+				Socket s1=ss.accept();
+				Socket s2=ss.accept();
+				joueursConnectes.add(s1);
+				nbJoueurs++;
+				joueursConnectes.add(s2);
+				nbJoueurs++;
+				String IP1 = s1.getRemoteSocketAddress().toString();
+				String IP2 = s2.getRemoteSocketAddress().toString();
+				System.out.println("Connexion du client numéro 1 IP= "+IP1);
+				System.out.println("Connexion du client numéro 2 IP= "+IP2);
+				new Conversation1(s1,s2).start();
+			}
+		}catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	class Conversation1 extends Thread{
+		private Socket socket1;
+		private Socket socket2;
+		public Conversation1(Socket socket1,Socket socket2){
+			super();
+			this.socket1=socket1;
+			this.socket2=socket2;
+		} 
+		//envoie de message à destinataire // discussion entre les joueurs
+		public synchronized void run() { 
+			try {
+				BufferedReader plec1 = new BufferedReader(new InputStreamReader(socket1.getInputStream()));
+				PrintWriter pred1 = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket1.getOutputStream())),true);
+				BufferedReader plec2 = new BufferedReader(new InputStreamReader(socket2.getInputStream()));
+				PrintWriter pred2 = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket2.getOutputStream())),true);
+				
+				pred1.println("Bienvenue,vous êtes le joueur numéro 1! Nous allons vous donnez un mot but que vous devrez faire deviner au joueur 2 avec des phrases le décrivant d'une longueur max de 50 caractères. 30% des caractères seront automatiquement effacé ainsi que tous les synonymes de ce mot.");
+				pred1.println("Le mot but est :"+motBut);
+				pred2.println("Bienvenue,vous êtes le joueur numéro 2! Vous devrez deviner le mot but décrit par le joueur 1. Vous pouvez écrire des phrases de 50 caractère au max. Si la phrase contient le mot but vous avez gagné. Veuillez patienter.");
+				
+				
+				Thread envoi= new Thread(new Runnable() {
+			          String req1;
+			          String req2;
+			          @Override
+			          public void run() {
+			             while(true){
+			                req1 = sc.nextLine();
+			                pred1.println(req1);
+			                pred1.flush();
+			                req2 = sc.nextLine();
+			                pred2.println(req2);
+			                pred2.flush();
+			             }
+			          }
+			       });
+				envoi.start();
+				
+				Thread recevoir= new Thread(new Runnable() {
+			          String req1 ;
+			          @Override
+			          public void run() {
+			             try {
+			                req1 = plec1.readLine();
+			                //tant que le client est connecté
+			                while(req1!=null){
+			                   pred2.println(req1);
+			                   String req2=plec2.readLine();
+			                   if(req2!=null) {
+			                	   pred1.println(req2);
+			                   }
+			                }
+			                //sortir de la boucle si le client a déconecté
+			                System.out.println("Client déconecté");
+			                //fermer le flux et la session socket
+			                pred1.close();
+			                pred2.close();
+			                socket1.close();
+			                socket2.close();
+			             } catch (IOException e) {
+			                  e.printStackTrace();
+			             }
+			         }
+			      });
+			      recevoir.start();
+					
+					
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	public static void main (String[] args) {
+		new ServeurMT().start();
+	}
+
+}
+
+//JOUEUR1
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.Scanner;
+
+public class Joueur1 {
+static final int port = 2345 ;
+static String so;
+	
+	public static void main(String[] args) throws Exception{
+		Socket socket1 = new Socket ("127.0.0.1", port);
+		System.out.println("SOCKET+" + socket1);
+		
+		BufferedReader plec = new BufferedReader( new InputStreamReader(socket1.getInputStream()));
+		
+		PrintWriter pred = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket1.getOutputStream())),
+				true);
+		
+	    
+		Scanner scan = new Scanner (System.in);
+		Thread envoyer = new Thread(new Runnable() {
+            String msg;
+             @Override
+             public void run() {
+               while(true){
+                 msg = scan.nextLine();
+                 pred.println(msg);
+                 pred.flush();
+               }
+            }
+        });
+        envoyer.start();
+  
+       Thread recevoir = new Thread(new Runnable() {
+           String msg;
+           @Override
+           public void run() {
+              try {
+                msg = plec.readLine();
+                while(msg!=null){
+                   System.out.println("Joueur1 recoit : "+msg);
+                   msg = plec.readLine();
+                }
+                System.out.println("Serveur déconecté");
+                pred.close();
+                socket1.close();
+              } catch (IOException e) {
+                  e.printStackTrace();
+              }
+           }
+       });
+       recevoir.start();
+	}
+}
+
+
+//JOUEUR2
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.Scanner;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.Scanner;
+
+public class Joueur2 {
+static final int port = 2345 ;
+static String so;
+	
+	public static void main(String[] args) throws Exception{
+		Socket socket2 = new Socket ("127.0.0.1", port);
+		System.out.println("SOCKET+" + socket2);
+		
+		BufferedReader plec = new BufferedReader( new InputStreamReader(socket2.getInputStream()));
+		
+		PrintWriter pred = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket2.getOutputStream())),
+				true);
+		
+		Scanner scan = new Scanner (System.in);
+		Thread envoyer = new Thread(new Runnable() {
+            String msg;
+             @Override
+             public void run() {
+               while(true){
+                 msg = scan.nextLine();
+                 pred.println(msg);
+                 pred.flush();
+               }
+            }
+        });
+        envoyer.start();
+  
+       Thread recevoir = new Thread(new Runnable() {
+           String msg;
+           @Override
+           public void run() {
+              try {
+                msg = plec.readLine();
+                while(msg!=null){
+                   System.out.println("Joueur1 recoit : "+msg);
+                   msg = plec.readLine();
+                }
+                System.out.println("Serveur déconecté");
+                pred.close();
+                socket2.close();
+              } catch (IOException e) {
+                  e.printStackTrace();
+              }
+           }
+       });
+       recevoir.start();
+}
+
+}
