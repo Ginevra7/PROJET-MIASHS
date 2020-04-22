@@ -18,6 +18,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.locks.Lock;
+
+
 public class ServeurMT extends Thread {
 	String hostName = "127.0.0.1";
 	int nbJoueurs; 
@@ -26,6 +28,7 @@ public class ServeurMT extends Thread {
 	private String motBut;
 	private Mot mot;
 	final Scanner sc=new Scanner(System.in);
+	
 	public ServeurMT(Dictionnaire dict, Mot mot,String motBut){
 		this.dict=dict;
 		this.mot=mot;
@@ -40,13 +43,13 @@ public class ServeurMT extends Thread {
 				Socket s1=ss.accept();
 				Socket s2=ss.accept();
 				joueursConnectes.add(s1);
-				nbJoueurs++;				//‡ chaque joueur en plus, le nombre des joueurs connectÈs augmentes 
+				nbJoueurs++;				//√† chaque joueur en plus, le nombre des joueurs connect√©s augmente 
 				joueursConnectes.add(s2);
 				nbJoueurs++;
 				String IP1 = s1.getRemoteSocketAddress().toString();
-				System.out.println("Connexion du client numÈro 1 rÈÁue. IP= "+IP1);
+				System.out.println("Connexion du client num√©ro 1 re√ßue. IP= "+IP1);
 				String IP2 = s2.getRemoteSocketAddress().toString();
-				System.out.println("Connexion du client numÈro 2 rÈÁue. IP= "+IP2);
+				System.out.println("Connexion du client num√©ro 2 re√ßue. IP= "+IP2);
 				new Conversation(s1,s2).start(); //On utilise un thread avec le code de la conversation
 			
 			}
@@ -69,19 +72,19 @@ public class ServeurMT extends Thread {
 
 		public synchronized void run() {
 
-			//code de la conversation entre deux joueurs: un thread pour l'envoie et un thread pour la rÈcÈption. Ces deux threads ont des threads correspondants dans les classes Joueur1 et Joueur2
+			//code de la conversation entre deux joueurs: un thread pour l'envoie et un thread pour la r√©c√©ption. Ces deux threads ont des threads correspondants dans les classes Joueur1 et Joueur2
 			try{
 				BufferedReader plec1 = new BufferedReader(new InputStreamReader(socket1.getInputStream()));
 				PrintWriter pred1 = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket1.getOutputStream())),true);
 				BufferedReader plec2 = new BufferedReader(new InputStreamReader(socket2.getInputStream()));
 				PrintWriter pred2 = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket2.getOutputStream())),true);
 
-				pred1.println("Bienvenue,vous Ítes le joueur numÈro ! Nous allons vous donnez un mot but que vous devrez faire deviner au joueur 2 avec des phrases le dÈcrivant d'une longueur max de 50 caractËres. 30% des caractËres seront automatiquement effacÈ ainsi que tous les synonymes de ce mot. Vous avez 5 essais.");
+				pred1.println("Bienvenue, vous √™tes le joueur num√©ro 1! Nous allons vous donnez un mot but que vous devrez faire deviner au joueur 2 avec des phrases le d√©crivant d'une longueur maximale de 50 caract√®res. 30% des caract√®res seront automatiquement effac√© ainsi que tous les synonymes de ce mot. Vous avez 5 essais.");
 				pred1.println("Le mot but est : "+motBut);
-				pred2.println("Bienvenue,vous Ítes le joueur numÈro 2! Vous devrez deviner le mot but dÈcrit par le joueur 1. Vous pouvez Ècrire des phrases de 50 caractËre au max. Si la phrase contient le mot but vous avez gagnÈ. Vous avez 5 essais.");
+				pred2.println("Bienvenue, vous √™tes le joueur num√©ro 2! Vous devrez deviner le mot but d√©crit par le joueur 1. Vous pouvez √©crire des phrases de 50 caract√®res maximum. Si la phrase contient le mot but vous avez gagn√©. Vous avez 5 essais.");
 				pred2.println("S'il vous plait attendez");
 				
-				//On utilise ce thread pour pour lire les phrase Ècrites sur le clavier par le joueur. 
+				//On utilise ce thread pour pour lire les phrase √©crites sur le clavier par le joueur. 
 				Thread envoi= new Thread(new Runnable() {
 			          String req1;
 			          String req2;
@@ -102,42 +105,42 @@ public class ServeurMT extends Thread {
 			 });
 			envoi.start();
 			
-			//On utilise ce thread pour l'Èchange des phrases entre les duex joueurs
+			//On utilise ce thread pour l'√©change des phrases entre les deux joueurs
 			Thread recevoir= new Thread(new Runnable() {
-				boolean trouve; //on utilise un boolean pour savoir si le joueur2 a trouvÈ le mot but (rÈsultat en appelant la mÈthode isMot de la classe Dictionnaire 
+				boolean trouve; //on utilise un boolean pour savoir si le joueur2 a trouv√© le mot but (r√©sultat en appelant la m√©thode isMot de la classe Dictionnaire)
 				String req1,req2;
 				int i =0;
-		          @Override
+	
 		          public synchronized void run() {
 		        	  try {
 		            	 while(true){
 		            		 synchronized (this){
-		            	 pred1.println("Veuillez Ècrire votre phrase:"); //On demande au joueur1 d'Ècrire une phrase de 50 caractËres.
+		            	 pred1.println("Veuillez √©crire votre phrase:"); //On demande au joueur1 d'√©crire une phrase de moins de 50 caract√®res.
 		                 req1 = plec1.readLine();
-		                 pred1.println("S'il vous plait attendez la rÈponse du joueur2.");
+		                 pred1.println("S'il vous plait attendez la r√©ponse du joueur2.");
 		                 while(req1.length()>50){
-		                	 pred1.println("Veuillez Ècrire une phrase de 50 caractËre au maximum.");
+		                	 pred1.println("Veuillez √©crire une phrase de 50 caract√®re au maximum.");
 		                	 req1 = plec1.readLine();
-		                	 pred1.println("S'il vous plait attendez la rÈponse du joueur2.");
+		                	 pred1.println("S'il vous plait attendez la r√©ponse du joueur2.");
 		                 	}
 		            	 }
-		                //tant que le client est connectÈ
+		                //Tant que le client est connect√©
 		            	 
-		            	//Dans cette boucle on renvoie la phrase du joueur1 sans synonymes et sans le 30% des caractËres au joueur2 (on utilise les mÈthode isSyno et supprimer de la classe dictionnaire).
-		            	//On demande au joueur2 d'Ècrire sa phrase,on vÈrifie s'il a devinÈ. S'il y a le mot but, on arËte le jeux,autrement on continue jusqu'‡ la cinquiËme essai.
+		            	//Dans cette boucle on renvoie la phrase du joueur1 sans synonymes et sans 30% des caract√®res au joueur2 (on utilise les m√©thode isSyno et supprimer de la classe Dictionnaire).
+		            	//On demande au joueur2 d'√©crire sa phrase, on v√©rifie s'il a trouv√©. S'il y a le mot but, on arr√™te le jeu, autrement on continue jusqu'au cinqui√®me essai.
 		            	 while(req1!=null){   
 		                 req1=dict.isSyno(req1,mot);
 		                 req1=dict.supprimer(req1);
-		                 if(req1=="") //on prend en considÈration le cas o˘ la phrase du joueur1 devient vide ou l'est dÈj‡.
-		                	   pred2.println("Suite ‡ l'elimination des caractËres,la phrase entiËre du joueur1 a ÈtÈ effacÈe. Pas d'indices. ");
+		                 if(req1=="") //on prend en consid√©ration le cas o√π la phrase du joueur1 devient vide ou l'est d√©j√†.
+		                	   pred2.println("Suite √† l'elimination des caract√®res, la phrase enti√®re du joueur1 a √©t√© effac√©e. Pas d'indices. ");
 		                 else
 		                	   pred2.println(req1);
 		                 synchronized (this){
-			                   pred2.println("Veuillez Ècrire votre phrase:");
+			                   pred2.println("Veuillez √©crire votre phrase:");
 			                   req2=plec2.readLine();
 			                  
 			                   while(req2.length()>50){
-			                	   pred2.println("Veuillez Ècrire une phrase de 50 caractËre au maximum.");
+			                	   pred2.println("Veuillez √©crire une phrase de 50 caract√®res au maximum.");
 			                	   req2 = plec2.readLine();
 			                	   pred2.println("S'il vous plait attendez");
 			                   }
@@ -145,9 +148,9 @@ public class ServeurMT extends Thread {
 		                 if(req2!=null) {
 		                	   boolean trouve=dict.isMot(req2,motBut);
 		                	   pred1.println(req2);
-		                	   if(trouve){  //cas o˘ le joueur1 a devinÈ:on ferme le jeux.
-		                		   pred1.println("Bravo vous avez gagnÈ!");
-		                	       pred2.println("Bravo vous avez gagnÈ!");
+		                	   if(trouve){  //cas o√π le joueur1 a devin√© : on ferme le jeu.
+		                		   pred1.println("Bravo vous avez gagn√©!");
+		                	       pred2.println("Bravo vous avez gagn√©!");
 		                	       pred1.close();
 			   		               pred2.close();
 			   		               socket1.close();
@@ -157,7 +160,7 @@ public class ServeurMT extends Thread {
 		                	  
 		                   }
 		                    i++;
-		                    if(i==5){ //cas o˘ les joueurs ont fait 5 essais:on ferme le jeux.
+		                    if(i==5){ //cas o√π les joueurs ont fait 5 essais : on ferme le jeu.
 		                		   pred1.println("Oh non vous avez perdu!");
 		                	       pred2.println("Oh non vous avez perdu!");
 		                	       pred1.close();
@@ -169,19 +172,19 @@ public class ServeurMT extends Thread {
 		                 }
 		                    pred2.println("S'il vous plait attendez.");
 		                    synchronized (this){
-		                    	pred1.println("Veuillez Ècrire votre phrase:");
+		                    	pred1.println("Veuillez √©crire votre phrase:");
 		                    	req1 = plec1.readLine();
-		                    	pred1.println("S'il vous plait attendez la rÈponse du joueur2.");
+		                    	pred1.println("S'il vous plait attendez la r√©ponse du joueur2.");
 		                    	 while(req1.length()>50){
-				                	 pred1.println("Veuillez Ècrire une phrase de 50 caractËre au maximum.");
+				                	 pred1.println("Veuillez √©crire une phrase de 50 caract√®res au maximum.");
 				                	 req1 = plec1.readLine();
-				                	 pred1.println("S'il vous plait attendez la rÈponse du joueur2.");
+				                	 pred1.println("S'il vous plait attendez la r√©ponse du joueur2.");
 				                 	}
 		                    }
 		                }
 		            	
-		                //sortir de la boucle si le client a dÈconectÈ
-		                System.out.println("Client dÈconnectÈ");
+		                //sortir de la boucle si le client s'est d√©conect√©
+		                System.out.println("Client d√©connect√©");
 		            	 
 		                //fermer le flux et la session socket
 		                pred1.close();
@@ -203,20 +206,37 @@ public class ServeurMT extends Thread {
 	
 				
 	public static void main (String[] args) {
-		//On a crÈe 10 mots,mais le dictionnaire peut etre modifiÈ et Èlargi(?) en ajoutant des nouveaux Mot
+		//On a cr√©e quelques mots, mais le dictionnaire peut etre modifi√© et aggrandi en ajoutant des nouveaux mots
 		Mot mot1=new Mot("chaise");
 		mot1.ajoutSyno("fauteuil");
-		mot1.ajoutSyno("canapÈ");
+		mot1.ajoutSyno("canap√©");
 		mot1.ajoutSyno("chauffause");
-		mot1.ajoutSyno("siËge");
+		mot1.ajoutSyno("si√®ge");
 		Mot mot2=new Mot("plancher");
 		mot2.ajoutSyno("parquet");
 		mot2.ajoutSyno("sol");
 		mot2.ajoutSyno("plateforme");
 		mot2.ajoutSyno("estrade");
+		Mot mot3=new Mot("fleur");
+		mot3.ajoutSyno("fleurette");
+		mot3.ajoutSyno("gerbe");
+		Mot mot4=new Mot("amiti√©");
+		mot4.ajoutSyno("affection");
+		mot4.ajoutSyno("camaraderie");
+		mot4.ajoutSyno("entente");
+		Mot mot5=new Mot("chaussure");
+		mot5.ajoutSyno("soulier");
+		mot5.ajoutSyno("godasse");
+		mot5.ajoutSyno("escarpin");
+		mot5.ajoutSyno("chausson");
+		mot5.ajoutSyno("espadrille");
+		mot5.ajoutSyno("sabot");
 		Dictionnaire dict=new Dictionnaire();
 		dict.ajoutMot(mot1);
 		dict.ajoutMot(mot2);
+		dict.ajoutMot(mot3);
+		dict.ajoutMot(mot4);
+		dict.ajoutMot(mot5);
 		int i=(int)(Math.random()*(dict.getNbMots())); // ici on chosit au hasard le mot but du jeux.
 		Mot mot=dict.getMOT(i);
 		String motBut=mot.getMot();
