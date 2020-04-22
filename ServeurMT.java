@@ -212,9 +212,9 @@ public class ServeurMT extends Thread {
 		mot1.ajoutSyno("canapé");
 		mot1.ajoutSyno("chauffause");
 		mot1.ajoutSyno("siège");
-		Mot mot2=new Mot("plancher");
+		Mot mot2=new Mot("sol");
 		mot2.ajoutSyno("parquet");
-		mot2.ajoutSyno("sol");
+		mot2.ajoutSyno("plancher");
 		mot2.ajoutSyno("plateforme");
 		mot2.ajoutSyno("estrade");
 		Mot mot3=new Mot("fleur");
