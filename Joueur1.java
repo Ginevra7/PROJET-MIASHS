@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
 public class Joueur1 {
 static final int port = 2567 ;
 	public static void main(String[] args) throws Exception{
@@ -18,6 +19,7 @@ static final int port = 2567 ;
 			
 			Scanner scan = new Scanner (System.in);
 			
+		//Ces deux threads : envoyer et recevoir, ont des threads correspondants dans le ServeurMT
 			Thread envoyer = new Thread(new Runnable() {
 	            String msg;
 	             @Override
@@ -40,11 +42,11 @@ static final int port = 2567 ;
 		                msg = plec.readLine();
 		                while(msg!=null){
 		                   
-		                   System.out.println("Joueur1 reçoit : "+msg);
+		                   System.out.println("Joueur1 reÃ§oit : "+msg);
 		                 
 		                   msg = plec.readLine();
 		               }
-		                System.out.println("Le jeu est fini. Joueur1 déconnecté");
+		                System.out.println("Le jeu est fini. Joueur1 dÃ©connectÃ©");
 		                pred.close();
 		                socket1.close();
 		                scan.close();
