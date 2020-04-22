@@ -79,12 +79,12 @@ public class ServeurMT extends Thread {
 				BufferedReader plec2 = new BufferedReader(new InputStreamReader(socket2.getInputStream()));
 				PrintWriter pred2 = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket2.getOutputStream())),true);
 
-				pred1.println("Bienvenue, vous êtes le joueur numéro 1! Nous allons vous donnez un mot but que vous devrez faire deviner au joueur 2 avec des phrases le décrivant d'une longueur maximale de 50 caractères. 30% des caractères seront automatiquement effacé ainsi que tous les synonymes de ce mot. Vous avez 5 essais.");
+				pred1.println("Bienvenue, vous êtes le joueur numéro 1! Nous allons vous donner un mot but que vous devrez faire deviner au joueur 2 avec des phrases le décrivant d'une longueur maximale de 50 caractères. 30% des caractères seront automatiquement effacés ainsi que tous les synonymes de ce mot. Vous avez 5 essais.");
 				pred1.println("Le mot but est : "+motBut);
 				pred2.println("Bienvenue, vous êtes le joueur numéro 2! Vous devrez deviner le mot but décrit par le joueur 1. Vous pouvez écrire des phrases de 50 caractères maximum. Si la phrase contient le mot but vous avez gagné. Vous avez 5 essais.");
 				pred2.println("S'il vous plait attendez");
 				
-				//On utilise ce thread pour pour lire les phrase écrites sur le clavier par le joueur. 
+				//On utilise ce thread pour lire les phrase écrites sur le clavier par le joueur. 
 				Thread envoi= new Thread(new Runnable() {
 			          String req1;
 			          String req2;
@@ -119,7 +119,7 @@ public class ServeurMT extends Thread {
 		                 req1 = plec1.readLine();
 		                 pred1.println("S'il vous plait attendez la réponse du joueur2.");
 		                 while(req1.length()>50){
-		                	 pred1.println("Veuillez écrire une phrase de 50 caractère au maximum.");
+		                	 pred1.println("Veuillez écrire une phrase de 50 caractères au maximum.");
 		                	 req1 = plec1.readLine();
 		                	 pred1.println("S'il vous plait attendez la réponse du joueur2.");
 		                 	}
@@ -183,7 +183,7 @@ public class ServeurMT extends Thread {
 		                    }
 		                }
 		            	
-		                //sortir de la boucle si le client s'est déconecté
+		                //sortir de la boucle si le client s'est déconnecté
 		                System.out.println("Client déconnecté");
 		            	 
 		                //fermer le flux et la session socket
