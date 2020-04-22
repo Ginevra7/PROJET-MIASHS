@@ -73,7 +73,7 @@ public class Dictionnaire {
 		return str;
 	}
 	
-	//Cette méthode est utilisée dans le jeu pour effacer 30% des caractères (y compris les espaces) de la phrase du joueur1 après avoir enlevé tous les synonymes
+	//Cette méthode est utilisée dans le jeu pour effacer 30% des caractères (les espaces compris) de la phrase du joueur1 après avoir enlevé tous les synonymes
 	//Elle prend en paramètre un String (la phrase du joueur1) et renvoie la phrase sans les 30% des caractères 
 	public String supprimer(String s){
 		int j=(int)(30*s.length()/100);
@@ -97,7 +97,7 @@ public class Dictionnaire {
 		}
 	
 	
-	//On utlise cette méthode dans le jeu après que le jouer2 a écrit sa phrase pour vérifier s'il y a le mot but écrit.
+	//On utlise cette méthode dans le jeu après que le jouer2 ait écrit sa phrase pour vérifier s'il y a le mot but écrit.
 	//Elle prend en paramère un String(la phrase du joueur2) et un autre String (le mot but). Elle renvoie un boolean: True si le joueur2 a déviné,False sinon.
 	public Boolean isMot(String str,String mot){
 		boolean flag=true;
