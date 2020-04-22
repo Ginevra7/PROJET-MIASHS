@@ -2,7 +2,8 @@ package socket;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-//Chaque instance de cette classe crée un objet composé d'une string (le mot) et une liste de string (les synonymes du mot) 
+
+//Chaque instance de cette classe crÃ©Ã©e un objet composÃ© d'un String (le mot) et une liste de String (les synonymes du mot) 
 
 public class Mot {
 	private String mot;
@@ -34,7 +35,7 @@ public class Mot {
 		return synonymes.size();
 	}
 	
-	//Cette méthode est utilisée par la méthode isSyno de la classe Dictionnaire et compare le mot d'une phrase du joueur1 avec tous les synonymes du mot but du jeux  
+	//Cette mÃ©thode est utilisÃ©e par la mÃ©thode isSyno de la classe Dictionnaire et compare le mot d'une phrase du joueur1 avec tous les synonymes du mot but du jeu 
 	public Boolean isSyno(String str){ 
 		String s="";
 		Iterator <String> i=synonymes.iterator(); 
