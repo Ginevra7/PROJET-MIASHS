@@ -14,7 +14,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.Random;
 
-//Chaque instance de cette classe crée un objet composé d'une liste d'objets Mot,dans notre jeux on utilise seulement une instance qui contient tous les possibles mots but.  
+//Chaque instance de cette classe crÃ©Ã©e un objet composÃ© d'une liste d'objets Mot, dans notre jeu on utilise seulement une instance qui contient tous les mots but possibles.  
 
 public class Dictionnaire {
 	private ArrayList<Mot> dict;
@@ -36,8 +36,8 @@ public class Dictionnaire {
 		return mot;
 	}
 	
-	//Cette méthode est utilisé dans le jeux pour effacer les synonymes et le mot but (si présent) de la phrase du joueur1 avant qu'elle soit envoyée au joueur2
-	//Elle prend en paramètres une String (la phrase du joueur1),l'objet Mot et renvoie la phrase sans les synonymes et sans le mot but 
+	//Cette mÃ©thode est utilisÃ©e dans le jeu pour effacer les synonymes et le mot but (si prÃ©sent) de la phrase du joueur1 avant qu'elle soit envoyÃ©e au joueur2
+	//Elle prend en paramÃ¨tre un String (la phrase du joueur1), l'objet Mot et renvoie la phrase sans les synonymes et sans le mot but 
 	public String isSyno(String str,Mot mot){
 		boolean trouve=true;
 		boolean flag=true;
@@ -45,7 +45,8 @@ public class Dictionnaire {
 		int j=0;
 		char vide;
 		String mot1="";
-		while(i++<str.length()){          //Dans cette boucle on compare les mots de la phrase un par un avec les synonymes du mot but et les effacer eventuellement de la phrase
+		while(i++<str.length()){          //Dans cette boucle on compare les mots de la phrase un par un avec les synonymes du mot but et on les efface eventuellement de la phrasre
+			
 			vide=str.charAt(j);
 			mot1="";
 			while(vide!=' '&& vide!='\''&& flag){    //Dans cette boucle on isole les mots de la phrase un par un
@@ -57,10 +58,10 @@ public class Dictionnaire {
 				}
 				j++;
 			}
-			trouve=mot.isSyno(mot1); //Ici on utilise la méthode de la classe Mot
+			trouve=mot.isSyno(mot1); //Ici on utilise la mÃ©thode de la classe Mot
 			
 			if(trouve||(mot.getMot()).equals(mot1)){
-				if(mot1.length()==str.length())  //ici on traite le cas où la phrase écrit par le joueur1 est le mot but,dans ce cas on renvoie la phrase vide.
+				if(mot1.length()==str.length())  //ici on traite le cas oÃ¹ la phrase Ã©crite par le joueur1 est le mot but, dans ce cas on renvoie une phrase vide.
 					return str="";
 				int l=mot1.length();
 				str=str.substring(0,j-l)+str.substring(j+1,str.length());
@@ -72,8 +73,8 @@ public class Dictionnaire {
 		return str;
 	}
 	
-	//Cette méthode est utilisé dans le jeux pour effacer le 30% des caractères(y compris les espaces) de la phrase du joueur1 après avoir éliminé tous synonymes
-	//Elle prend en paramètres une String (la phrase du joueur1) et renvoie la phrase sans le 30% des caractères 
+	//Cette mÃ©thode est utilisÃ©e dans le jeu pour effacer 30% des caractÃ¨res (y compris les espaces) de la phrase du joueur1 aprÃ¨s avoir enlevÃ© tous les synonymes
+	//Elle prend en paramÃ¨tre un String (la phrase du joueur1) et renvoie la phrase sans les 30% des caractÃ¨res 
 	public String supprimer(String s){
 		int j=(int)(30*s.length()/100);
 		if(j>1){                  //on utilise une condition if/else pour traiter le cas d'une phrase du joueur1 trop courte 
@@ -87,7 +88,7 @@ public class Dictionnaire {
 		else return s="";
 	}
 	
-	//On appelle cette méthode dans la méthode 'supprimer' pour supprimer un caractère au hasard de la phrase
+	//On appelle cette mÃ©thode dans la mÃ©thode 'supprimer' pour supprimer un caractÃ¨re au hasard de la phrase
 	public String removeCh(String s,int i){
 		if((i>s.length()-1||i<0))
 			return null;
@@ -96,15 +97,15 @@ public class Dictionnaire {
 		}
 	
 	
-	//On utlise cette méthode dans le jeux après que le jouer2 a écrit sa phrase pour vérifier s'il y a le mot but écrit.
-	//Elle prend en paramères une String(la phrase du joueur2) et une String (le mot but). Elle renvoie un boolean: True si le joueur2 a déviné,False sinon.
+	//On utlise cette mÃ©thode dans le jeu aprÃ¨s que le jouer2 a Ã©crit sa phrase pour vÃ©rifier s'il y a le mot but Ã©crit.
+	//Elle prend en paramÃ¨re un String(la phrase du joueur2) et un autre String (le mot but). Elle renvoie un boolean: True si le joueur2 a dÃ©vinÃ©,False sinon.
 	public Boolean isMot(String str,String mot){
 		boolean flag=true;
 		int i=0;
 		int j=0;
 		char vide;
 		String mot1="";
-		while(i++<str.length()){ //Cette boucle compare chaque mot de la phrase un par un avec le mot but. Si on trouve les memes on renvoie true,on continue la boucle sinon.
+		while(i++<str.length()){ //Cette boucle compare chaque mot de la phrase un par un avec le mot but. Si on trouve les mÃªmes on renvoie true, on continue la boucle sinon.
 			vide=str.charAt(j);
 			mot1="";
 			while(vide!=' '&& flag){  //Cette boucle isole chaque mot de la phrase un par un.
