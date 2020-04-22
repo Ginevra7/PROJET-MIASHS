@@ -47,7 +47,7 @@ public class Joueur2 {
                    msg = plec.readLine();
                }
                
-                System.out.println("Le jeux est fini! Joueur2 déconnecté");
+                System.out.println("Le jeu est fini! Joueur2 déconnecté");
                 pred.close();
                 socket2.close();
                 scan.close();
