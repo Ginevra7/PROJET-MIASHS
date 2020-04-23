@@ -19,6 +19,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.locks.Lock;
 
+//Crée par Martin Elisa Martini Solène Romagnoni Nadia
 
 public class ServeurMT extends Thread {
 	String hostName = "127.0.0.1";
