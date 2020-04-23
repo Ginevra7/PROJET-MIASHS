@@ -3,7 +3,7 @@ package socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-//Crée par Martin Elisa Martini Solène Romagnoni Nadia
+//Créé par Martin Elisa Martini Solène Romagnoni Nadia
 
 //Chaque instance de cette classe créée un objet composé d'un String (le mot) et une liste de String (les synonymes du mot) 
 
