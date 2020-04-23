@@ -7,6 +7,8 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+//Crée par Martin Elisa Martini Solène Romagnoni Nadia
+
 public class Joueur2 {
 	public static final int port=2567;
 	public static void main(String [] args)throws Exception{
