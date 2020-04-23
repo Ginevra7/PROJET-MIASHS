@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.Random;
 
+//Crée par Martin Elisa Martini Solène Romagnoni Nadia
 //Chaque instance de cette classe créée un objet composé d'une liste d'objets Mot, dans notre jeu on utilise seulement une instance qui contient tous les mots but possibles.  
 
 public class Dictionnaire {
