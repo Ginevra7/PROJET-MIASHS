@@ -167,7 +167,7 @@ public class ServeurMT extends Thread {
 				               			   pred1.println("Bienvenue,vous êtes le joueur numéro ! Nous allons vous donnez un mot but que vous devrez faire deviner au joueur 2 avec des phrases le décrivant d'une longueur max de 50 caractères. 30% des caractères seront automatiquement effacé ainsi que tous les synonymes de ce mot. Vous avez 5 essais.");
 				            			   pred1.println("Le mot but est : "+motBut);
 				            			   pred2.println("Bienvenue,vous êtes le joueur numéro 2! Vous devrez deviner le mot but décrit par le joueur 1. Vous pouvez écrire des phrases de 50 caractère au max. Si la phrase contient le mot but vous avez gagné. Vous avez 5 essais.");
-				            			   pred2.println("S'il vous plait attendez");
+				            			   
 				                	    	   
 			                	       }
 						      if(req1.equals("non")||req2.equals("non")){ //si un parmi les deux joueurs répond non :on ferme le jeu.
