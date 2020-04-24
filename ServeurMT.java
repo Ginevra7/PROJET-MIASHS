@@ -26,14 +26,16 @@ public class ServeurMT extends Thread {
 	int nbJoueurs; 
 	private List<Socket> joueursConnectes=new ArrayList<>();
 	private Dictionnaire dict;
-	private String motBut;
+	private int i;
 	private Mot mot;
+	private String motBut;
 	final Scanner sc=new Scanner(System.in);
 	
-	public ServeurMT(Dictionnaire dict, Mot mot,String motBut){
+	public ServeurMT(Dictionnaire dict){
 		this.dict=dict;
-		this.mot=mot;
-		this.motBut=motBut;
+		i=(int)(Math.random()*(dict.getNbMots())); // ici on chosit au hasard le mot but du jeux.
+		mot=dict.getMOT(i);
+		motBut=mot.getMot();
 	}
 	public synchronized void run() {
 
@@ -92,8 +94,8 @@ public class ServeurMT extends Thread {
 			          public synchronized void run() {
 			        	 
 			        	  try{
-		        		  		while(true){
-		        		  			req1 = sc.nextLine();
+		        		  	while(true){
+		        		  		req1 = sc.nextLine();
 		 			                pred1.println(req1);
 		 			               
 		 			                req2 = sc.nextLine();
@@ -115,16 +117,16 @@ public class ServeurMT extends Thread {
 		          public synchronized void run() {
 		        	  try {
 		            	 while(true){
-		            		 synchronized (this){
-		            	 pred1.println("Veuillez écrire votre phrase:"); //On demande au joueur1 d'écrire une phrase de moins de 50 caractères.
-		                 req1 = plec1.readLine();
-		                 pred1.println("S'il vous plait attendez la réponse du joueur2.");
-		                 while(req1.length()>50){
-		                	 pred1.println("Veuillez écrire une phrase de 50 caractères au maximum.");
-		                	 req1 = plec1.readLine();
-		                	 pred1.println("S'il vous plait attendez la réponse du joueur2.");
-		                 	}
-		            	 }
+		            		synchronized (this){
+						 pred1.println("Veuillez écrire votre phrase:"); //On demande au joueur1 d'écrire une phrase de moins de 50 caractères.
+						 req1 = plec1.readLine();
+						 pred1.println("S'il vous plait attendez la réponse du joueur2.");
+						 while(req1.length()>50||req1.length()<2){
+							 pred1.println("Veuillez écrire une phrase de 50 caractères au maximum.");
+							 req1 = plec1.readLine();
+							 pred1.println("S'il vous plait attendez la réponse du joueur2.");
+							}
+						 }
 		                //Tant que le client est connecté
 		            	 
 		            	//Dans cette boucle on renvoie la phrase du joueur1 sans synonymes et sans 30% des caractères au joueur2 (on utilise les méthode isSyno et supprimer de la classe Dictionnaire).
@@ -140,7 +142,7 @@ public class ServeurMT extends Thread {
 			                   pred2.println("Veuillez écrire votre phrase:");
 			                   req2=plec2.readLine();
 			                  
-			                   while(req2.length()>50){
+			                   while(req2.length()>50||req2.length()<2){
 			                	   pred2.println("Veuillez écrire une phrase de 50 caractères au maximum.");
 			                	   req2 = plec2.readLine();
 			                	   pred2.println("S'il vous plait attendez");
@@ -149,38 +151,86 @@ public class ServeurMT extends Thread {
 		                 if(req2!=null) {
 		                	   boolean trouve=dict.isMot(req2,motBut);
 		                	   pred1.println(req2);
-		                	   if(trouve){  //cas où le joueur1 a deviné : on ferme le jeu.
-		                		   pred1.println("Bravo vous avez gagné!");
-		                	       pred2.println("Bravo vous avez gagné!");
-		                	       pred1.close();
-			   		               pred2.close();
-			   		               socket1.close();
-			   		               socket2.close();
-		                	       
-		                	   }
+		                	   if(trouve){  //cas où le joueur2 a deviné : on demande auz deux joueurs s'ils veulent commencer un nouveau match.
+						       pred1.println("Bravo vous avez gagné!");
+						       pred2.println("Bravo vous avez gagné!");
+						       pred1.println("Veuillez vous commencer un nouveau match? (oui ou non)");
+			                	       pred2.println("Veuillez vous commencer un nouveau match? (oui ou non)");
+			                	       req1=plec1.readLine();
+			                	       req2=plec2.readLine();
+						       if(req1.equals("oui")&&req2.equals("oui")){ //si les deux joueurs répondent oui,on commence un nouveau match.
+			                	    	   trouve=false;
+			                	    	   i=-1;
+			                	    	   int j=(int)(Math.random()*(dict.getNbMots())); // ici on chosit au hasard le mot but du jeux.
+			               				   mot=dict.getMOT(j);
+			               				   motBut=mot.getMot();
+				               			   pred1.println("Bienvenue,vous êtes le joueur numéro ! Nous allons vous donnez un mot but que vous devrez faire deviner au joueur 2 avec des phrases le décrivant d'une longueur max de 50 caractères. 30% des caractères seront automatiquement effacé ainsi que tous les synonymes de ce mot. Vous avez 5 essais.");
+				            			   pred1.println("Le mot but est : "+motBut);
+				            			   pred2.println("Bienvenue,vous êtes le joueur numéro 2! Vous devrez deviner le mot but décrit par le joueur 1. Vous pouvez écrire des phrases de 50 caractère au max. Si la phrase contient le mot but vous avez gagné. Vous avez 5 essais.");
+				            			   pred2.println("S'il vous plait attendez");
+				                	    	   
+			                	       }
+						      if(req1.equals("non")||req2.equals("non")){ //si un parmi les deux joueurs répond non :on ferme le jeu.
+			                	    	   if(req1.equals("oui")){
+			                	    		   pred1.println("Le joueur2 ne veut pas commencer un nouveau match.");
+			                	    	   }
+			                	    	   if(req2.equals("oui")){
+			                	    		   pred2.println("Le joueur1 ne veut pas commencer un nouveau match.");
+			                	    	   }
+							       pred1.close();
+							       pred2.close();
+							       socket1.close();
+							       socket2.close();
+						      }
+
+						   }
 		                	  
 		                   }
 		                    i++;
-		                    if(i==5){ //cas où les joueurs ont fait 5 essais : on ferme le jeu.
-		                		   pred1.println("Oh non vous avez perdu!");
+		                    if(i==5){ //cas où les joueurs ont fait 5 essais : on demande aux deux joueurs s'ils veulent commencer un nouveau match.
+		                               pred1.println("Oh non vous avez perdu!");
 		                	       pred2.println("Oh non vous avez perdu!");
-		                	       pred1.close();
+		                	       pred1.println("Veuillez vous commencer un nouveau match? (oui ou non)");
+			                	       pred2.println("Veuillez vous commencer un nouveau match? (oui ou non)");
+			                	       req1=plec1.readLine();
+			                	       req2=plec2.readLine();
+				                	    
+			                	       if(req1.equals("oui")&&req2.equals("oui")){//si le deux joueurs répondent oui,on commence un nouveau match.
+			                	    	   i=0;
+			                	    	   int j=(int)(Math.random()*(dict.getNbMots())); // ici on chosit au hasard le mot but du jeux.
+			               				   mot=dict.getMOT(j);
+			               				   motBut=mot.getMot();
+				               			   pred1.println("Bienvenue,vous êtes le joueur numéro ! Nous allons vous donnez un mot but que vous devrez faire deviner au joueur 2 avec des phrases le décrivant d'une longueur max de 50 caractères. 30% des caractères seront automatiquement effacé ainsi que tous les synonymes de ce mot. Vous avez 5 essais.");
+				            			   pred1.println("Le mot but est : "+motBut);
+				            			   pred2.println("Bienvenue,vous êtes le joueur numéro 2! Vous devrez deviner le mot but décrit par le joueur 1. Vous pouvez écrire des phrases de 50 caractère au max. Si la phrase contient le mot but vous avez gagné. Vous avez 5 essais.");
+				            			
+				                	    	   
+			                	       }
+					              if(req1.equals("non")||req2.equals("non")){//si un parmi les deux joueurs répond non, on ferme le jeu.
+			                	    	   if(req1.equals("oui")){
+			                	    		   pred1.println("Le joueur2 ne veut pas commencer un nouveau match.");
+			                	    	   }
+			                	    	   if(req2.equals("oui")){
+			                	    		   pred2.println("Le joueur1 ne veut pas commencer un nouveau match.");
+			                	    	   }
+					               pred1.close();
 			   		               pred2.close();
 			   		               socket1.close();
 			   		               socket2.close();
-		                		 
+						      }
 		                	 
 		                 }
 		                    pred2.println("S'il vous plait attendez.");
 		                    synchronized (this){
 		                    	pred1.println("Veuillez écrire votre phrase:");
 		                    	req1 = plec1.readLine();
-		                    	pred1.println("S'il vous plait attendez la réponse du joueur2.");
-		                    	 while(req1.length()>50){
+		                    	
+		                    	 while(req1.length()>50||req1.length()<2){
 				                	 pred1.println("Veuillez écrire une phrase de 50 caractères au maximum.");
 				                	 req1 = plec1.readLine();
 				                	 pred1.println("S'il vous plait attendez la réponse du joueur2.");
 				                 	}
+					 pred1.println("S'il vous plait attendez la réponse du joueur2.");
 		                    }
 		                }
 		            	
@@ -237,11 +287,8 @@ public class ServeurMT extends Thread {
 		dict.ajoutMot(mot2);
 		dict.ajoutMot(mot3);
 		dict.ajoutMot(mot4);
-		dict.ajoutMot(mot5);
-		int i=(int)(Math.random()*(dict.getNbMots())); // ici on chosit au hasard le mot but du jeux.
-		Mot mot=dict.getMOT(i);
-		String motBut=mot.getMot();
-		new ServeurMT(dict,mot,motBut).start();
+		dict.ajoutMot(mot5)
+		new ServeurMT(dict).start();
 
 	}
 
